@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://api.gazerecorder.com/GazeCloudAPI.js"></script>
+    <script src="https://code.jquery.com/jquery-1.6.2.min.js"></script>
+    <script>
+
+        var stream;
+        // var snapshot;
+        // var deviceId;
+        // var valid = false
+        var gazeXlist = [];
+        var gazeYlist = [];
+        var gazeDocXlist = [];
+        var gazeDocYlist = [];
+
+        GazeCloudAPI.OnResult = function(data) {
+            var x = data.docX;
+            var y = data.docY;
+            console.log(x + " " + y)
+            gazeDocXlist.push(x);
+            gazeDocYlist.push(y);
+            gazeXlist.push(data.GazeX);
+            gazeYlist.push(data.GazeY);
+        }
+
+        async function startCapture() {
+            stream = await navigator.mediaDevices.getDisplayMedia(
+                {
+                    video: {
+                        mediaSource: 'browser'
+                    },
+                }
+            );
+
+            GazeCloudAPI.StartEyeTracking();
+        }
+
+        function stopCapture() {
+            GazeCloudAPI.StopEyeTracking();
+            stream.getTracks().forEach(track => track.stop());
+            saveData();
+        }
+
+        function saveData() {
+            console.log('Saving data');
+
+            var data = {};
+            data.timestamp = Date.now();
+            data.url = window.location.href;
+            data.gazeX = gazeXlist;
+            data.gazeY = gazeYlist;
+
+            // console.log("collected data:");
+            // console.log(gazeXlist.slice(0, 10));
+            // console.log("data to save:");
+            // console.log(data.gazeX.slice(0, 10));
+
+            // send data to flask app
+            $.ajax(
+                {
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    url: '/experiment',
+                    success: function() {
+                        console.log("success");
+                    }
+                }
+            )
+            
+            gazeXlist = [];
+            gazeYlist = [];
+        }
+
+    </script>
+</head>
+<head>
+    <meta charset="UTF-8">
+    <title>EyeTracking test</title>
+</head>
+<body>
+<button type="button" onclick="startCapture();">Start</button>
+<button type="button" onclick="stopCapture()">Stop</button>
+|
+<a href="/">Back to home page</a>
+
+<iframe src="https://en.wikipedia.org/wiki/Main_Page" frameborder="0" style="overflow:hidden;height:100%;width:100%" height="100%" width="100%"></iframe>
+</body>
+</html>
