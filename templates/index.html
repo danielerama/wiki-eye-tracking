@@ -1,7 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<body>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+
+    <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+
+    <script>
+        function startEyeTracking() {
+            webgazer.clearData(); // clear previous data 
+
+            webgazer.setGazeListener(function(data, elapsedTime) {
+                // if (data == null) return;
+                console.log(data, elapsedTime);
+                })
+                .addMouseEventListeners()
+                .saveDataAcrossSessions(true)
+                .begin();
+
+            webgazer.setTracker("TFFacemesh");
+            webgazer.setRegression("ridge");
+
+            webgazer.showVideoPreview(true) /* shows all video previews */
+                .showPredictionPoints(false) /* shows a square every 100 milliseconds where current prediction is */
+                .applyKalmanFilter(false); /* Kalman Filter defaults to on. Can be toggled by user. */
+        }
+    </script>
+
+<body onload="startEyeTracking();">
+    <br><br><br><br><br><br><br><br><br><br><br><br><br>
     <h1>Wikipedia Eye-Tracking Experiment</h1>
-    <p>Click <a href="/experiment">here</a> if you want to start the experiment</p>
+    <p>Click <a href="/calibration">here</a> if you want to start the experiment</p>
 </body>

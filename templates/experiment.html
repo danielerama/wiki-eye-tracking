@@ -1,64 +1,53 @@
 <!DOCTYPE html>
+
 <html lang="en">
-<head>
-    <script src="https://api.gazerecorder.com/GazeCloudAPI.js"></script>
-    <script src="https://code.jquery.com/jquery-1.6.2.min.js"></script>
-    <script>
+	<head>
+		<meta charset="UTF-8">
+		<title>Calibration</title>
 
-        var stream;
-        // var snapshot;
-        // var deviceId;
-        // var valid = false
-        var gazeXlist = [];
-        var gazeYlist = [];
-        var gazeDocXlist = [];
-        var gazeDocYlist = [];
+		<style>
+			html, body {
+				width:  100%;
+				height: 100%;
+				margin: 0;
+				overflow: hidden;
+			}
 
-        GazeCloudAPI.OnResult = function(data){
-            var x = data.docX;
-            var y = data.docY;
-            console.log(x + " "+ y)
-            gazeDocXlist.push(x);
-            gazeDocYlist.push(y);
-            gazeXlist.push(data.GazeX);
-            gazeYlist.push(data.GazeY);
-        };
+			canvas {
+				border: 1px solid black;
+			}
+		</style>
 
-        async function startCapture() {
-            stream = await navigator.mediaDevices.getDisplayMedia(
-                {
-                    video: {
-                        mediaSource: 'browser',
-                    },
-                }
-            );
+		<script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-            GazeCloudAPI.StartEyeTracking();
+		<script>
+			function startEyeTracking() {
+				webgazer.setGazeListener(function(data, elapsedTime) {
+					if (data == null) return;
+					console.log(data, elapsedTime);
+					})
+					.saveDataAcrossSessions(true)
+					.begin();
 
-        }
+				webgazer.setTracker("TFFacemesh");
+				webgazer.setRegression("ridge");
 
-        function stopCapture() {
-            GazeCloudAPI.StopEyeTracking();
-            stream.getTracks().forEach(track => track.stop());
-            saveData();
-        }
+				webgazer.showVideoPreview(false) /* shows all video previews */
+					.showPredictionPoints(true) /* shows a square every 100 milliseconds where current prediction is */
+					.applyKalmanFilter(true); /* Kalman Filter defaults to on. Can be toggled by user. */
 
-        function saveData(){
-            console.log('Saving data');
-        }
+				webgazer.removeMouseEventListeners();
+			}
+		</script>
 
-    </script>
-</head>
-<head>
-    <meta charset="UTF-8">
-    <title>EyeTracking test</title>
-</head>
-<body>
-<button type="button" onclick="startCapture();">Start</button>
-<button type="button" onclick="stopCapture()">Stop</button>
-|
-<a href="/">Back to home page</a>
-
-<iframe src="http://wikipedia.org/en/EPFL" frameborder="0" style="overflow:hidden;height:100%;width:100%" height="100%" width="100%"></iframe>
-</body>
+		<script>
+			function calibration() {
+				startEyeTracking();
+			}
+		</script>
+	</head>
+	<body onload="calibration();">
+		<iframe id="wikiFrame" src="https://en.wikipedia.org/wiki/Main_Page" width="100%" height="100%"></iframe>
+	</body>
 </html>
