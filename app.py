@@ -4,16 +4,21 @@ import json
 app = Flask(__name__)
 
 @app.route("/")
+@app.route("/index")
 def index():
     return render_template("index.html")
 
-@app.route("/experiment", methods=['GET', 'POST'])
-def experiment():
+@app.route("/calibration", methods=['GET', 'POST'])
+def calibration():
     if request.method == 'POST':
         data = request.get_json()
         with open("data.json", "w") as f:
             json.dump(data, f)
 
+    return render_template("calibration.html")
+
+@app.route("/experiment")
+def experiment():
     return render_template("experiment.html")
 
 # enables debug mode
