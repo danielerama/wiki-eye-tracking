@@ -3,29 +3,31 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Calibration</title>
+		<title>Experiment</title>
 
-		<style>
-			html, body {
-				width:  100%;
-				height: 100%;
-				margin: 0;
-				overflow: hidden;
-			}
+		<link rel="stylesheet" type="text/css" href="static/style.css">
 
-			canvas {
-				border: 1px solid black;
-			}
-		</style>
-
-		<script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+		<script src="/static/webgazer.js"></script>
 		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 
 		<script>
 			function startEyeTracking() {
 				webgazer.setGazeListener(function(data, elapsedTime) {
 					if (data == null) return;
-					console.log(data, elapsedTime);
+
+					let el = document.elementFromPoint(data.x, data.y);
+					if (el instanceof HTMLIFrameElement) {
+						targetEl = el.contentWindow.document.elementFromPoint(data.x, data.y);
+						if (targetEl.nodeName == "IMG" || targetEl.nodeName == "P" || (targetEl.nodeName == "SPAN" & targetEl.classList.contains("mw-headline"))) { 
+							targetEl.style.opacity = .3; 
+						} else {
+							let elems = el.contentWindow.document.querySelectorAll("img, p, span.mw-headline");
+							for (let i=0; i<elems.length; i++) {
+								elems[i].style.opacity = 1;
+							}
+						}
+					}
 					})
 					.saveDataAcrossSessions(true)
 					.begin();
@@ -40,14 +42,12 @@
 				webgazer.removeMouseEventListeners();
 			}
 		</script>
+	</head>
+	<body>
+		<iframe src="/show_wiki_page" width="100%" height="100%"></iframe>
 
 		<script>
-			function calibration() {
-				startEyeTracking();
-			}
+			startEyeTracking();
 		</script>
-	</head>
-	<body onload="calibration();">
-		<iframe id="wikiFrame" src="https://en.wikipedia.org/wiki/Main_Page" width="100%" height="100%"></iframe>
 	</body>
 </html>

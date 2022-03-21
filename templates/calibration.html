@@ -7,7 +7,7 @@
 
 		<link rel="stylesheet" type="text/css" href="static/style.css">
 
-		<script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+		<script src="/static/webgazer.js"></script>
 		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 		<script>
@@ -20,8 +20,7 @@
 				webgazer.clearData(); // clear previous data 
 
 				webgazer.setGazeListener(function(data, elapsedTime) {
-					// if (data == null) return;
-					console.log(data, elapsedTime);
+					if (data == null) return;
 					})
 					.saveDataAcrossSessions(true)
 					.begin();

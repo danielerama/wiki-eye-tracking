@@ -1,33 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-
     <link rel="stylesheet" type="text/css" href="static/style.css">
 
-    <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
-
+    <script src="/static/webgazer.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<body>
     <script>
-        function startEyeTracking() {
-            webgazer.clearData(); // clear previous data 
+        webgazer.clearData(); // clear previous data 
 
-            webgazer.setGazeListener(function(data, elapsedTime) {
-                // if (data == null) return;
-                console.log(data, elapsedTime);
-                })
-                .addMouseEventListeners()
-                .saveDataAcrossSessions(true)
-                .begin();
+        webgazer.setGazeListener(function(data, elapsedTime) {
+            if (data == null) return;
+            })
+            .begin();
 
-            webgazer.setTracker("TFFacemesh");
-            webgazer.setRegression("ridge");
+        webgazer.setTracker("TFFacemesh");
+        webgazer.setRegression("ridge");
 
-            webgazer.showVideoPreview(true) /* shows all video previews */
-                .showPredictionPoints(false) /* shows a square every 100 milliseconds where current prediction is */
-                .applyKalmanFilter(false); /* Kalman Filter defaults to on. Can be toggled by user. */
-        }
+        webgazer.showVideoPreview(true) /* shows all video previews */
+            .showPredictionPoints(false) /* shows a square every 100 milliseconds where current prediction is */
+            .applyKalmanFilter(false); /* Kalman Filter defaults to on. Can be toggled by user. */
     </script>
 
-<body onload="startEyeTracking();">
-    <br><br><br><br><br><br><br><br><br><br><br><br><br>
-    <h1>Wikipedia Eye-Tracking Experiment</h1>
-    <p>Click <a href="/calibration">here</a> if you want to start the experiment</p>
+    <button id="index-button" onclick="window.location.href='/calibration'">
+        <p>Wait until the video loads and the tracker starts capturing your face.</p>
+        <p>Make sure your head remains as still as possible for the duration of the experiment.</p>
+        <p>When your face is captured correctly, click here to start the calibration.</p>
+    </button>
 </body>
