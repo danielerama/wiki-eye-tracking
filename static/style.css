@@ -5,6 +5,8 @@ html, body, iframe {
     overflow: hidden;
 }
 
-canvas {
-    border: 1px solid black;
+#index-button {
+    display: block;
+    margin: 0 auto;
+    margin-top: 5%;
 }
