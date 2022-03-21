@@ -19,7 +19,12 @@ def calibration():
 
 @app.route("/experiment")
 def experiment():
+    # return render_template("experiment.html")
     return render_template("experiment.html")
+
+@app.route('/show_wiki_page')
+def show_wiki_page():
+    return render_template('unito_wiki_page.html')
 
 # enables debug mode
 if __name__ == "__main__":
