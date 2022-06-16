@@ -1,12 +1,51 @@
-html, body, iframe {
-    width:  100%;
+html {
+    display: block;
     height: 100%;
+    width: 100%;
+}
+
+body {
+    display: block;
     margin: 0;
+    height: 100%;
+    width: 100%;
+    background-color: khaki;
+    font-family: sans-serif;
     overflow: hidden;
+}
+
+#iframe {
+    height: 90%;
+    width: 100%;
+    overflow: hidden;
+    background-color: white;
 }
 
 #index-button {
     display: block;
     margin: 0 auto;
     margin-top: 5%;
+}
+
+#index-div, #questionnaire-container {
+    background-color: white;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    padding: 2%;
+    max-width: 55em;
+    line-height: 150%;
+}
+
+#question-div {
+    padding-left: 2%;
+    padding-right: 2%;
+    padding-top: .5%;
+    padding-bottom: .5%;
+    max-width: 55em;
+}
+
+#answer-form {
+    display: none;
 }
