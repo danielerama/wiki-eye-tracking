@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Thank you!{% endblock %}
+
+{% block javascript %}{% endblock %}
+
+{% block content %}
+<div id="questionnaire-container">
+        <h1>Thank you!</h1>
+        <p>
+            The experiment is finally over. Thank you for participating, we hope you learnt some interesting Wikipedia facts too!
+        </p>
+        <p>
+            Just one more final question:
+            <form action="{{ url_for('questionnaire') }}" method="POST" style="padding-left: 2.5em;">
+                How often do you use Wikipedia?
+                {% for btn in template_form.freq_use %}
+                <tr>
+                    <br><td>{{ btn }}</td>
+                    <td>{{ btn.label }}</td>
+                </tr>
+                {% endfor %}
+                <br>{{ template_form.submit() }}
+            </form>
+        </p>
+        <p>
+           To know more about our research and how you are contributing, visit <a href="https://meta.wikimedia.org/wiki/Research:Quantifying_the_role_of_images_for_navigation_on_Wikipedia">this</a> Meta page.
+        </p>
+        <p>For questions and feedback, contact <a href="https://danielerama.github.io/" target="_blank">Daniele Rama</a>.</p>
+</div>  
+{% endblock %}

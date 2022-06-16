@@ -1,147 +1,22 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
 
-<html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title>Calibration</title>
+{% block title %}Calibration{% endblock %}
 
-		<link rel="stylesheet" type="text/css" href="static/style.css">
+{% block javascript %}
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script type="text/javascript" src="/static/webgazer.js"></script>
+	<script type="text/javascript" src="/static/main.js"></script>
+	<script src="/static/calibration.js"></script>
+{% endblock %}
 
-		<script src="/static/webgazer.js"></script>
-		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% block content %}
+	<canvas id="plotting_canvas" width="500" height="500">
+		<!-- fallback content in case the browser does not support the Canvas API. -->
+		Your browser does not support the Canvas API.
+	</canvas>
 
-		<script>
-			function startEyeTracking() {
-				swal.fire({
-					title: "Start calibration",
-					text: "Click on each point 10 times until it disappears."
-				})
-
-				webgazer.clearData(); // clear previous data 
-
-				webgazer.setGazeListener(function(data, elapsedTime) {
-					if (data == null) return;
-					})
-					.saveDataAcrossSessions(true)
-					.begin();
-
-				webgazer.setTracker("TFFacemesh");
-				webgazer.setRegression("ridge");
-
-				webgazer.showVideoPreview(false) /* shows all video previews */
-					.showPredictionPoints(true) /* shows a square every 100 milliseconds where current prediction is */
-					.applyKalmanFilter(false); /* Kalman Filter defaults to on. Can be toggled by user. */
-			}
-		</script>
-
-		<script>
-			function calibration() {
-				startEyeTracking();
-
-				var canvas = document.getElementById('plotting_canvas');
-
-				if (canvas.getContext) {
-					let ctx = canvas.getContext('2d');
-					canvas.width = window.innerWidth;
-					canvas.height = window.innerHeight;
-
-					class Circle {
-						constructor(x, y) {
-							this.x = x;
-							this.y = y;
-							this.radius = 10;
-							this.color = "red";
-							this.nClicked = 0;
-						}
-
-						draw() {
-							ctx.beginPath();
-							ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
-							ctx.closePath();
-							// if (this.nClicked == 5) {this.color = "green";}
-							ctx.fillStyle = this.color;
-							ctx.fill();
-						}
-					}
-
-					function drawCircle(i) {
-						ctx.clearRect(0, 0, canvas.width, canvas.height);
-						calibrationPoints = setCalibrationPoints(canvas.width, canvas.height);
-
-						circle.x = calibrationPoints[i].x; 
-						circle.y = calibrationPoints[i].y;
-						circle.draw();
-					}
-
-					function gazeInside(gazeX, gazeY) {
-						 return Math.sqrt( (circle.x - gazeX)*(circle.x - gazeX) + (circle.y - gazeY)*(circle.y - gazeY) ) < circle.radius;
-					}
-
-					function setCalibrationPoints(cw, ch) {
-						return [
-							{x: cw*0.1, y: ch*0.1},
-							{x: cw*0.5, y: ch*0.1},
-							{x: cw*0.9, y: ch*0.1},
-							{x: cw*0.9, y: ch*0.5},
-							{x: cw*0.9, y: ch*0.9},
-							{x: cw*0.5, y: ch*0.9},
-							{x: cw*0.1, y: ch*0.9},
-							{x: cw*0.1, y: ch*0.5},
-							{x: cw*0.5, y: ch*0.5}
-						];
-					}
-
-					let calibrationPoints = setCalibrationPoints(canvas.width, canvas.height);
-					let nPointsClicked = 0;
-					const maxClicks = 10;
-
-					circle = new Circle();
-					drawCircle(nPointsClicked);
-					
-					addEventListener("mousedown", function(e) {
-						if (gazeInside(e.clientX, e.clientY)) {
-							console.log("clicked");
-							circle.nClicked++;
-							if (circle.nClicked == maxClicks) {
-								circle.nClicked = 0;
-								nPointsClicked++;
-							}
-							if (nPointsClicked < calibrationPoints.length) {
-								drawCircle(nPointsClicked);
-							} else {
-								setTimeout(() => {
-									webgazer.showPredictionPoints(false);
-									swal.fire({
-										title: "Calibrated!",
-										// text: "Your accuracy is: ",
-										icon: "success",
-										allowOutsideClick: false,
-										// confirmButtonColor: '#3085d6',
-										// confirmButtonText: "OK"
-									}).then(() => {
-										window.location.href = "{{ url_for('experiment') }}";
-									});
-								}, 200);
-							}
-						}
-					});
-
-					// Resize canvas
-					addEventListener("resize", () => {
-						canvas.height = innerHeight;
-						canvas.width = innerWidth;
-						drawCircle(nPointsClicked);
-					});
-				} else {
-					console.log("Canvas API not supported");
-				}
-			}		
-		</script>
-	</head>
-	<body onload="calibration();">
-		<canvas id="plotting_canvas" width="500" height="500">
-			<!-- fallback content in case the browser does not support the Canvas API. -->
-			Your browser does not support the Canvas API.
-		</canvas>
-	</body>
-</html>
+	<script>
+		startEyeTracking(clearPreviousData = true);
+		showInstructions();
+	</script>
+{% endblock %}

@@ -1,53 +1,64 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
 
-<html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title>Experiment</title>
+{% block title %}Experiment{% endblock %}
 
-		<link rel="stylesheet" type="text/css" href="static/style.css">
+{% block javascript %}
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script type="text/javascript" src="/static/webgazer.js"></script>
+	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	<script type="text/javascript" src="/static/main.js"></script>
+	<script type="text/javascript" src="/static/experiment.js"></script>
+{% endblock %}
 
-		<script src="/static/webgazer.js"></script>
-		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+{% block content %}
+	<div id="question-div">
+		<p>
+			<strong>Question:</strong> What was the hit off Steppenwolf's self-titled debut LP?
+		</p>
+		<input id="insert-button" type="button" value="Type your answer!" onclick="showAnswerBox();">
+		<form id="answer-form" action="{{ url_for('experiment') }}" method="POST">
+			<p>
+				{{ template_form.hidden_tag() }}
+				<b>Answer:</b> {{ template_form.answer() }}
+			</p>
+			<p>
+				Did you already know the answer before reading the text?
+				{% for btn in template_form.answer_known %}
+					<tr>
+						<br><td>{{ btn }}</td>
+						<td>{{ btn.label }}</td>
+					</tr>
+				{% endfor %}
+			</p>
+			<p>
+				How much familiar are you with the topic of the article?
+				{% for btn in template_form.familiarity %}
+					<tr>
+						<br><td>{{ btn (class_="radio-inline") }}</td>
+						<td>{{ btn.label }}</td>
+					</tr>
+				{% endfor %}
+			</p>
+			<p>
+				How difficult was it to find the answer?
+				{% for btn in template_form.difficulty %}
+					<tr>
+						<br><td>{{ btn }}</td>
+						<td>{{ btn.label }}</td>
+					</tr>
+				{% endfor %}
+			</p>
+			<p>
+				{{ template_form.submit() }}
+			</p>
+		</form>
+	</div>
 
-		<script>
-			function startEyeTracking() {
-				webgazer.setGazeListener(function(data, elapsedTime) {
-					if (data == null) return;
+	<iframe id="iframe" src="/wiki/Hard_rock"></iframe>
 
-					let el = document.elementFromPoint(data.x, data.y);
-					if (el instanceof HTMLIFrameElement) {
-						targetEl = el.contentWindow.document.elementFromPoint(data.x, data.y);
-						if (targetEl.nodeName == "IMG" || targetEl.nodeName == "P" || (targetEl.nodeName == "SPAN" & targetEl.classList.contains("mw-headline"))) { 
-							targetEl.style.opacity = .3; 
-						} else {
-							let elems = el.contentWindow.document.querySelectorAll("img, p, span.mw-headline");
-							for (let i=0; i<elems.length; i++) {
-								elems[i].style.opacity = 1;
-							}
-						}
-					}
-					})
-					.saveDataAcrossSessions(true)
-					.begin();
-
-				webgazer.setTracker("TFFacemesh");
-				webgazer.setRegression("ridge");
-
-				webgazer.showVideoPreview(false) /* shows all video previews */
-					.showPredictionPoints(true) /* shows a square every 100 milliseconds where current prediction is */
-					.applyKalmanFilter(true); /* Kalman Filter defaults to on. Can be toggled by user. */
-
-				webgazer.removeMouseEventListeners();
-			}
-		</script>
-	</head>
-	<body>
-		<iframe src="/show_wiki_page" width="100%" height="100%"></iframe>
-
-		<script>
-			startEyeTracking();
-		</script>
-	</body>
-</html>
+	<script>
+		startEyeTracking(clearPreviousData = false);
+		showInstructions();
+		disableSearch();
+	</script>
+{% endblock %}

@@ -1,29 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-    <link rel="stylesheet" type="text/css" href="static/style.css">
+{% extends "base.html" %}
 
-    <script src="/static/webgazer.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<body>
-    <script>
-        webgazer.clearData(); // clear previous data 
+{% block title %}Home{% endblock %}
 
-        webgazer.setGazeListener(function(data, elapsedTime) {
-            if (data == null) return;
-            })
-            .begin();
+{% block javascript %}{% endblock %}
 
-        webgazer.setTracker("TFFacemesh");
-        webgazer.setRegression("ridge");
-
-        webgazer.showVideoPreview(true) /* shows all video previews */
-            .showPredictionPoints(false) /* shows a square every 100 milliseconds where current prediction is */
-            .applyKalmanFilter(false); /* Kalman Filter defaults to on. Can be toggled by user. */
-    </script>
-
-    <button id="index-button" onclick="window.location.href='/calibration'">
-        <p>Wait until the video loads and the tracker starts capturing your face.</p>
-        <p>Make sure your head remains as still as possible for the duration of the experiment.</p>
-        <p>When your face is captured correctly, click here to start the calibration.</p>
-    </button>
-</body>
+{% block content %}
+    <div id="index-div">
+        <h1>Hello!</h1>
+        <p>
+            We are a team of researchers from the University of Turin, the EPFL and the Wikimedia Foundation. 
+            We are conducting research on how people read Wikipedia articles.
+            <br>We would like you to participate in this research by completing the following tasks that simulate information seeking behavior on Wikipedia.
+            While reading articles, a webcam-based eye-tracking tool will record your eye position on the screen anonymously. 
+            The tasks will require approximately 20-30 minutes to complete.
+            <br>Thank you for taking some of your precious time! 
+            You are providing us with some very useful data for our research, and we hope you will learn some interesting Wikipedia facts too!
+        </p>
+        <p>
+            Each task is easy:
+            <ul>
+                <li>You are given a Wikipedia article and a question to answer.</li>
+                <li>The answer can be found in any textual or visual part of the article: written paragraphs, captions, images, etc.</li>
+                <li>Of course, some questions could be more difficult than others to answer. We do not require you to be as quick as possible — take your time!</li>
+                <li>Once you find the answer, just type it into the text box on top of the browser window.</li>
+            </ul>
+        </p>
+        <p>
+            <b>Important:</b> This experiment involves the use of an <a href="https://webgazer.cs.brown.edu/" target="_blank">eye-tracking sofware</a>.
+            While reading the article, your webcam keeps track of your eye positions on the screen as <i>(x, y)</i> coordinates. 
+            This data is collected anonymously and for the purpose of this research only.
+        </p>
+        <p>For questions and feedback, feel free to contact <a href="https://danielerama.github.io/" target="_blank">Daniele Rama</a>.</p>
+        <p>When ready, click here to start the experiment. <input type="button" value="Go!" onclick=window.location.href="{{ url_for('calibration') }}"></p>
+    </div>
+{% endblock %}
